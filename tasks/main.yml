@@ -1,0 +1,96 @@
+---
+
+# Grafana + Prometheus for monitoring servers
+# ---------------------------------------------------------------------------------------------------------------------
+
+# Copying the Prometheus config
+- name: Monitoring Server | Copy Prometheus configuration
+  copy:
+    dest: /tmp/
+    src: prometheus
+    mode: "0755"
+
+# Copying the Grafana config
+- name: Monitoring Server | Copy Grafana configuration
+  copy:
+    dest: /tmp/
+    src: grafana
+    mode: "0755"
+
+# Volume creation
+- name: Monitoring Server | Create docker volume prometheus_data
+  docker_volume:
+    name: "prometheus-data"
+
+- name: Monitoring Server | Create docker volume grafana_data
+  docker_volume:
+    name: "grafana-data"
+
+# Container deleteion
+- name: Monitoring Server | Remove docker container for Prometheus
+  docker_container:
+    api_version: "1.39"
+    name: prometheus
+    state: absent
+
+- name: Monitoring Server | Remove docker container for Grafana
+  docker_container:
+    api_version: "1.39"
+    name: grafana
+    state: absent
+
+# Container startup
+- name: Monitoring Server | Start docker container for Prometheus
+  docker_container:
+    api_version: "1.39"
+    name: prometheus
+    image: prom/prometheus:v2.11.1
+    volumes:
+      - prometheus-data:/prometheus
+      - /tmp/prometheus/:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart_policy: unless-stopped
+    exposed_ports:
+      - "9090"
+    networks:
+      - name: nginx-proxy
+    purge_networks: yes
+    labels:
+      org.label-schema.group: monitoring
+
+- name: Monitoring Server | Start docker container for Grafana
+  docker_container:
+    api_version: "1.39"
+    name: grafana
+    image: grafana/grafana:6.2.5
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - /tmp/grafana/datasources:/etc/grafana/datasources
+      - /tmp/grafana/dashboards:/etc/grafana/dashboards
+      - /tmp/grafana/notifiers:/etc/grafana/notifiers
+      - /tmp/grafana/users:/etc/grafana/users
+      - /tmp/grafana/setup.sh:/etc/grafana/setup.sh
+    entrypoint:
+      - /etc/grafana/setup.sh
+    exposed_ports:
+      - "3000"
+    env:
+      GF_SECURITY_ADMIN_USER: "{{ grafana_username }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_password }}"
+      GF_USERS_ALLOW_SIGN_UP: "{{ grafana_signup }}"
+      VIRTUAL_HOST: "{{ grafana_virtual_host }}"
+      VIRTUAL_PORT: "{{ grafana_virtual_port }}"
+      LETSENCRYPT_HOST: "{{ letsencrypt_host }}"
+      LETSENCRYPT_EMAIL: "{{ letsencrypt_email }}"
+    restart_policy: unless-stopped
+    purge_networks: yes
+    networks:
+      - name: nginx-proxy
+    labels:
+      org.label-schema.group: monitoring

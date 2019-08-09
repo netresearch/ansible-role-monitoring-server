@@ -1,0 +1,13 @@
+{
+  "name": "<NAME>",
+  "type": "<TYPE>",
+  "_comment": "Check https://grafana.com/docs/alerting/notifications/#all-supported-notifiers for all types",
+  "orgId": "<ORG ID (needs to be a number, usually 1)>",
+  "frequency": "15s",
+  "disableResolveMessage": false,
+  "isDefault": true,
+  "sendReminder": false,
+  "settings": {
+    "_comment": "Check https://docs.google.com/spreadsheets/d/1PEM2MUoH39X_T77s3LO3_PbSBQBpfBfeQ-h4BHR-EJ8/edit?usp=sharing for more information"
+  }
+}

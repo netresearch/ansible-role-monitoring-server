@@ -1,0 +1,6 @@
+{
+    "name": "<NAME>",
+    "email": "<EMAIL> (use <NAME>@localhost if you don't know any better)",
+    "login": "<LOGIN USERNAME>",
+    "password": "<PASSWORD>"
+}

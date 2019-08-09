@@ -1,0 +1,15 @@
+---
+
+## source:
+##   repository: "https://git.netresearch.de/stb/provisioning"
+##   file:       "./roles/stb-monitoring-server/defaults/main.yml"
+
+grafana_username: "admin"
+grafana_password: "admin"
+grafana_signup: "false"
+
+grafana_virtual_host: "monitor.localhost"
+grafana_virtual_port: "3000"
+
+letsencrypt_host: "monitor.localhost"
+letsencrypt_email: "monitor@localhost"
