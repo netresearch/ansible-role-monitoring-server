@@ -44,7 +44,7 @@
   docker_container:
     api_version: "1.39"
     name: prometheus
-    image: prom/prometheus:v3.6.0
+    image: prom/prometheus:v3.7.1
     volumes:
       - prometheus-data:/prometheus
       - /tmp/prometheus/:/etc/prometheus/
