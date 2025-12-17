@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@v24
+        uses: ansible/ansible-lint@v25
         continue-on-error: true  # Allow warnings for now, fix issues incrementally
 
   yaml-lint:
