@@ -16,7 +16,7 @@ permissions: {}
 jobs:
   lint:
     name: Ansible Lint
-    uses: netresearch/.github/.github/workflows/ansible-lint.yml@feat/ansible-reusables
+    uses: netresearch/.github/.github/workflows/ansible-lint.yml@main
     permissions:
       contents: read
     with:
