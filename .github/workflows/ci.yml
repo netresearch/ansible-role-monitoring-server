@@ -1,4 +1,8 @@
 # CI workflow for Ansible role
+#
+# Lint jobs run through the org's shared reusable workflows in
+# netresearch/.github, so the pinned action versions (checkout,
+# setup-python) are maintained centrally instead of per-repo.
 name: CI
 
 on:
@@ -7,52 +11,20 @@ on:
   pull_request:
     branches: [master, main]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   lint:
     name: Ansible Lint
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: '3.x'
-
-      - name: Install ansible-lint
-        run: pip install ansible-lint
-
-      - name: Run ansible-lint
-        run: ansible-lint .
-        continue-on-error: true  # Allow warnings for now, fix issues incrementally
+    uses: netresearch/.github/.github/workflows/ansible-lint.yml@feat/ansible-reusables
+    permissions:
+      contents: read
+    with:
+      # continue-on-error equivalent: warn on findings, fix incrementally.
+      soft-fail: true
 
   yaml-lint:
     name: YAML Lint
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Run yamllint
-        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
-        continue-on-error: true  # Allow warnings for now
-        with:
-          file_or_dir: .
-          config_file: .yamllint.yml
-          strict: false
+    uses: netresearch/.github/.github/workflows/lint-yaml.yml@main
+    permissions:
+      contents: read
